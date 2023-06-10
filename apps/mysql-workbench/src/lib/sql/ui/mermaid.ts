@@ -1,4 +1,4 @@
-import type { NodeData, AdditionalData } from './data';
+import type { NodeData, AdditionalData } from '../parser/data';
 import { getRandomString } from '$lib/utils/randomString';
 
 export default class MermaidUtils {
