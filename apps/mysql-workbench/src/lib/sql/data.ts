@@ -10,7 +10,7 @@ export interface MariaDBData {
 export interface MySQLData {
 }
 
-export type Metadata<T extends DBMS = 'MySQL'> = T extends 'MariaDB'
+export type AdditionalData<T extends DBMS = 'MySQL'> = T extends 'MariaDB'
   ? MariaDBData
   : T extends 'MySQL'
   ? MySQLData
@@ -21,7 +21,7 @@ export class NodeData {
     public id: string,
     public displayName: string,
     public type: string,
-    public additionalData: Metadata = {}
+    public additionalData: AdditionalData = {}
   ) { }
 }
 
