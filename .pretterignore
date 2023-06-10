@@ -1,0 +1,17 @@
+# Desktop configuration files.
+.DS_Store
+desktop.ini
+
+# Very big. https://i.redd.it/tfugj4n3l6ez.png
+node_modules/
+
+# Build outputs.
+build/
+.turbo/
+.svelte-kit/
+vite.config.*.timestamp-*
+
+# Private.
+.env
+.env.*
+credentials.json
