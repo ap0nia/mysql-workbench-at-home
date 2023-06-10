@@ -1,0 +1,13 @@
+{
+  "extends": ["./.svelte-kit/tsconfig.json"],
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "plugins": [
+      { "name": "typescript-svelte-plugin" }
+    ]
+  },
+  "include": ["src"]
+}
