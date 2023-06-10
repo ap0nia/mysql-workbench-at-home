@@ -29,7 +29,7 @@ import {
   highlightActiveLineGutter
 } from "@codemirror/view"
 
-export const basicSetup: Extension = [
+export const extensions: Extension = [
   json(),
   lineNumbers(),
   highlightActiveLineGutter(),
@@ -59,4 +59,29 @@ export const basicSetup: Extension = [
   ])
 ]
 
-export { EditorView } from "@codemirror/view"
+export const state = EditorState.create({
+  doc: JSON.stringify(
+    {
+      query_block: {
+        select_id: 1,
+        r_loops: 1,
+        r_total_time_ms: 0.183283374,
+        table: {
+          table_name: 'Item',
+          access_type: 'ALL',
+          r_loops: 1,
+          rows: 719,
+          r_rows: 719,
+          r_table_time_ms: 0.136826829,
+          r_other_time_ms: 0.036546113,
+          filtered: 100,
+          r_filtered: 100,
+        },
+      },
+    },
+    null,
+    2
+  ),
+  extensions,
+})
+
