@@ -73,18 +73,22 @@ export const state = EditorState.create({
     {
       query_block: {
         select_id: 1,
-        r_loops: 1,
-        r_total_time_ms: 0.183283374,
+        cost_info: {
+          query_cost: '72.90',
+        },
         table: {
           table_name: 'Item',
           access_type: 'ALL',
-          r_loops: 1,
-          rows: 719,
-          r_rows: 719,
-          r_table_time_ms: 0.136826829,
-          r_other_time_ms: 0.036546113,
-          filtered: 100,
-          r_filtered: 100,
+          rows_examined_per_scan: 719,
+          rows_produced_per_join: 719,
+          filtered: '100.00',
+          cost_info: {
+            read_cost: '1.00',
+            eval_cost: '71.90',
+            prefix_cost: '72.90',
+            data_read_per_join: '202K',
+          },
+          used_columns: ['sku', 'iname'],
         },
       },
     },
