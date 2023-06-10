@@ -1,3 +1,4 @@
+import { writable } from 'svelte/store'
 import { lintKeymap } from '@codemirror/lint'
 import { json } from '@codemirror/lang-json'
 import { EditorState, type Extension } from '@codemirror/state'
@@ -27,7 +28,10 @@ import {
   crosshairCursor,
   lineNumbers,
   highlightActiveLineGutter,
+  EditorView,
 } from '@codemirror/view'
+
+export const value = writable('')
 
 export const extensions: Extension = [
   json(),
@@ -48,6 +52,11 @@ export const extensions: Extension = [
   crosshairCursor(),
   highlightActiveLine(),
   highlightSelectionMatches(),
+  EditorView.lineWrapping,
+  EditorView.updateListener.of((v) => {
+    const json = v.state.doc.toJSON().join('')
+    value.set(json)
+  }),
   keymap.of([
     ...closeBracketsKeymap,
     ...defaultKeymap,
