@@ -1,22 +1,22 @@
-import { lintKeymap } from "@codemirror/lint"
-import { json } from "@codemirror/lang-json"
-import { EditorState, type Extension } from "@codemirror/state"
-import { defaultKeymap, history, historyKeymap } from "@codemirror/commands"
-import { searchKeymap, highlightSelectionMatches } from "@codemirror/search"
+import { lintKeymap } from '@codemirror/lint'
+import { json } from '@codemirror/lang-json'
+import { EditorState, type Extension } from '@codemirror/state'
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
+import { searchKeymap, highlightSelectionMatches } from '@codemirror/search'
 import {
   autocompletion,
   completionKeymap,
   closeBrackets,
-  closeBracketsKeymap
-} from "@codemirror/autocomplete"
+  closeBracketsKeymap,
+} from '@codemirror/autocomplete'
 import {
   defaultHighlightStyle,
   syntaxHighlighting,
   indentOnInput,
   bracketMatching,
   foldGutter,
-  foldKeymap
-} from "@codemirror/language"
+  foldKeymap,
+} from '@codemirror/language'
 import {
   keymap,
   highlightSpecialChars,
@@ -26,8 +26,8 @@ import {
   rectangularSelection,
   crosshairCursor,
   lineNumbers,
-  highlightActiveLineGutter
-} from "@codemirror/view"
+  highlightActiveLineGutter,
+} from '@codemirror/view'
 
 export const extensions: Extension = [
   json(),
@@ -55,8 +55,8 @@ export const extensions: Extension = [
     ...historyKeymap,
     ...foldKeymap,
     ...completionKeymap,
-    ...lintKeymap
-  ])
+    ...lintKeymap,
+  ]),
 ]
 
 export const state = EditorState.create({
@@ -84,4 +84,3 @@ export const state = EditorState.create({
   ),
   extensions,
 })
-

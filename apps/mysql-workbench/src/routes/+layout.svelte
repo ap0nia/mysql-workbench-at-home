@@ -4,7 +4,7 @@
 
   import { AppShell, autoModeWatcher } from '@skeletonlabs/skeleton'
   import Header from '$lib/components/Header.svelte'
-  import SideBar from '$lib/components/SideBar.svelte';
+  import SideBar from '$lib/components/SideBar.svelte'
 </script>
 
 <svelte:head>

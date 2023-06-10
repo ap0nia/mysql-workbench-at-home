@@ -23,8 +23,6 @@
     <div bind:this={parent} />
   </div>
   <div class="w-1/2">
-    <div>
-      Mermaid.JS Chart
-    </div>
+    <div>Mermaid.JS Chart</div>
   </div>
 </div>

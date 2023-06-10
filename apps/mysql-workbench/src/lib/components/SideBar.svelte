@@ -8,7 +8,7 @@
   ]
 </script>
 
-<AppRail width='w-24'>
+<AppRail width="w-24">
   {#each contents as { href, title }}
     <AppRailAnchor selected={$page.url.pathname === href} {title} name={title} {href}>
       <span>{title}</span>
