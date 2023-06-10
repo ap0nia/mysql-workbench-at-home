@@ -1,11 +1,7 @@
 import mermaid from 'mermaid'
 import ExplainedDataParser from './parser'
 
-/**
- * @param {ExplainedDataParser} parser
- * @param {HTMLElement} node
- */
-async function renderFlowchart(parser) {
+async function renderFlowchart(parser: ExplainedDataParser) {
   let renderingText = parser.buildMermaidContent()
 
   renderingText = `graph BT;\n${renderingText}`.trim()
@@ -18,10 +14,7 @@ async function renderFlowchart(parser) {
   return rendered.svg
 }
 
-/**
- * @param {string} string
- */
-export async function getAndParseContent(string) {
+export async function getAndParseContent(string: string) {
   try {
     const data = JSON.parse(string)
     const parser = new ExplainedDataParser(data)

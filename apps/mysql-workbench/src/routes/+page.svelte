@@ -27,7 +27,7 @@
   }
 </script>
 
-<div class="flex p-1 border-2 border-primary-200">
+<div class="border-primary-200 flex border-2 p-1">
   <div class="w-1/2">
     <div bind:this={parent} />
   </div>

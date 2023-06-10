@@ -4,7 +4,7 @@
  */
 export type DBMS = 'MariaDB' | 'MySQL'
 
-export interface MariaDBData { }
+export interface MariaDBData {}
 
 export interface MySQLData {
   query_block: {
@@ -49,7 +49,7 @@ export class NodeData {
     public additionalData: Exclude<AnyNestedRecord<AdditionalData>, Primitives> = Object.create(
       null
     )
-  ) { }
+  ) {}
 }
 
 export class Node {
@@ -58,8 +58,10 @@ export class Node {
     public parent: Node | MultibranchNode | BinaryTree | null = null,
     public left: Node | BinaryTree | null = null,
     public right: Node | BinaryTree | null = null,
-    public parentId: string | null = parent && 'data' in parent && parent.data.id || parent?.parentId || null
-  ) { }
+    public parentId: string | null = (parent && 'data' in parent && parent.data.id) ||
+      parent?.parentId ||
+      null
+  ) {}
 
   setLeft(leftNode: Node | BinaryTree) {
     this.left = leftNode
@@ -76,7 +78,7 @@ export class MultibranchNode {
     public children: BinaryTree[] = [],
     public parent: Node | BinaryTree | null = null,
     public parentId: string | null = parent?.parentId || null
-  ) { }
+  ) {}
 }
 
 export class BinaryTree {
