@@ -1,6 +1,6 @@
-import { Node, NodeData, BinaryTree, MultibranchNode } from './data'
-import PopupContentUtils from '../ui/popup'
 import MermaidUtils from '../ui/mermaid'
+import PopupContentUtils from '../ui/popup'
+import { Node, NodeData, BinaryTree, MultibranchNode } from './data'
 
 export default class ExplainedDataParser {
   currentDataLevel: NodeData['additionalData'] | null
@@ -30,6 +30,8 @@ export default class ExplainedDataParser {
   }
 
   _parseQueryBlockNode() {
+    if (!(this.data && 'query_block' in this.data && this.data.query_block)) return null
+
     const { query_block: queryBlockData } = this.data
 
     console.log(queryBlockData)
@@ -59,12 +61,12 @@ export default class ExplainedDataParser {
     return rootNode
   }
 
-  _parseOrderingNode(parentNode: Node) {
+  _parseOrderingNode(parentNode: Node | NodeData | null) {
     if (!(this.currentDataLevel && 'ordering_operation' in this.currentDataLevel)) return null
 
     const { ordering_operation: orderingOperation } = this.currentDataLevel
 
-    if (orderingOperation) {
+    if (parentNode && 'data' in parentNode && orderingOperation) {
       const { id, name } = MermaidUtils.getOrderingIdentifier(this.idPrefix)
 
       const nodeData = new NodeData(id, name, 'ordering', {
@@ -81,7 +83,7 @@ export default class ExplainedDataParser {
     return null
   }
 
-  _parseNestedLoopNodes(parentNode: Node) {
+  _parseNestedLoopNodes(parentNode: Node | NodeData | null) {
     if (!(this.currentDataLevel && 'nested_loop' in this.currentDataLevel)) return null
 
     const { nested_loop: nestedLoop } = this.currentDataLevel
@@ -95,34 +97,38 @@ export default class ExplainedDataParser {
     nestedLoop.forEach((query, index) => {
       const tableNodeData = this._parseTableData(query)
 
+      if (!(tableNodeData?.additionalData && 'cost_info' in tableNodeData.additionalData && 'rows_produced_per_join' in tableNodeData.additionalData)) return
+
       const { id, name } = MermaidUtils.getNestedLoopNodeIdentifier(this.idPrefix)
 
       const nestedLoopNodeData = new NodeData(id, name, 'nested_loop', {
-        cost_info: tableNodeData.additionalData.cost_info,
+        cost_info: tableNodeData?.additionalData?.cost_info,
         rows_produced_per_join: tableNodeData.additionalData.rows_produced_per_join,
       })
 
       // last table connects with the previous nested loop diamond
-      if (index !== nestedLoop.length - 1) {
+      if (index !== nestedLoop.length - 1 && parentNode && 'data' in parentNode) {
         parentNode = this.binaryTree.insert(nestedLoopNodeData, parentNode, 'left')
       }
 
-      const tableNode = this.binaryTree.insert(tableNodeData, parentNode, 'right')
+      if (parentNode && 'data' in parentNode) {
+        const tableNode = this.binaryTree.insert(tableNodeData, parentNode, 'right')
 
-      this._parseAttachedSubqueriesNodes(tableNode, query.table)
+        this._parseAttachedSubqueriesNodes(tableNode, query.table)
 
-      this._parseMaterializedFromSubquery(tableNode, query.table)
+        this._parseMaterializedFromSubquery(tableNode, query.table)
+      }
     })
 
     return parentNode
   }
 
-  _parseDuplicatesRemoval(parentNode: Node) {
+  _parseDuplicatesRemoval(parentNode: Node | NodeData | null) {
     if (!(this.currentDataLevel && 'duplicates_removal' in this.currentDataLevel)) return null
 
     const { duplicates_removal: duplicatesRemoval } = this.currentDataLevel
 
-    if (duplicatesRemoval) {
+    if (parentNode && 'data' in parentNode && duplicatesRemoval) {
       const { id, name } = MermaidUtils.getDuplicateRemovalsIdentifier(this.idPrefix)
 
       const nodeData = new NodeData(id, name, 'duplicate_removals', {
@@ -140,12 +146,12 @@ export default class ExplainedDataParser {
     return null
   }
 
-  _parseUnion(parentNode: Node) {
+  _parseUnion(parentNode: Node | NodeData | null) {
     if (!(this.currentDataLevel && 'union_result' in this.currentDataLevel)) return null
 
     const { union_result: unionResult } = this.currentDataLevel
 
-    if (unionResult) {
+    if (parentNode && unionResult && 'data' in parentNode) {
       const idPrefix = `${this.idPrefix}${parentNode.data.id}#union`
 
       const multibranchNodeData = new NodeData(idPrefix, 'Union', 'union')
@@ -174,39 +180,43 @@ export default class ExplainedDataParser {
 
     const { table: tableData } = data
     const { id, name } = MermaidUtils.getTableIdentifier(this.idPrefix, tableData.table_name)
-    const nodeData = new NodeData(id, name, 'table', { ...tableData })
+    const nodeData = new NodeData(id, name, 'table', { ...(tableData ?? {}) })
 
     return nodeData
   }
 
-  _parseTableNode(parentNode: Node) {
+  _parseTableNode(parentNode: Node | NodeData | null) {
     if (!(this.currentDataLevel && 'table' in this.currentDataLevel)) return null
 
     const { table } = this.currentDataLevel
 
-    if (table) {
+    if (table && parentNode && 'data' in parentNode) {
       const nodeData = this._parseTableData(this.currentDataLevel)
 
-      const currentNode = this.binaryTree.insert(nodeData, parentNode, 'left')
+      if (nodeData) {
+        const currentNode = this.binaryTree.insert(nodeData, parentNode, 'left')
 
-      this.currentDataLevel = table
+        this.currentDataLevel = table
 
-      this._parseAttachedSubqueriesNodes(currentNode, table)
+        this._parseAttachedSubqueriesNodes(currentNode, table)
 
-      this._parseMaterializedFromSubquery(currentNode, table)
+        this._parseMaterializedFromSubquery(currentNode, table)
 
-      return currentNode
+        return currentNode
+      }
+
     }
+
     return null
   }
 
-  _parseAttachedSubqueriesNodes(parentNode: Node | MultibranchNode, tableData: Object) {
+  _parseAttachedSubqueriesNodes(parentNode: Node | MultibranchNode, tableData: NodeData['additionalData']) {
     if (!(tableData && 'attached_subqueries' in tableData)) return null
 
     const { attached_subqueries: attachedSubqueries } = tableData
 
     if (attachedSubqueries) {
-      const idPrefix = `${this.idPrefix}${parentNode.data.id}#subqueries`
+      const idPrefix = `${this.idPrefix}${parentNode.data?.id}#subqueries`
 
       const multibranchNodeData = new NodeData(
         idPrefix,
@@ -306,12 +316,12 @@ export default class ExplainedDataParser {
         ? node.data.type === 'nested_loop'
           ? PopupContentUtils.getNestedLoopContent(node.data)
           : node.data.type === 'ordering'
-          ? PopupContentUtils.getOrderingContent(node.data)
-          : node.data.type === 'query_block'
-          ? PopupContentUtils.getQueryBlockContent(node.data)
-          : node.data.type === 'table'
-          ? PopupContentUtils.getTableContent(node.data)
-          : ''
+            ? PopupContentUtils.getOrderingContent(node.data)
+            : node.data.type === 'query_block'
+              ? PopupContentUtils.getQueryBlockContent(node.data)
+              : node.data.type === 'table'
+                ? PopupContentUtils.getTableContent(node.data)
+                : ''
         : ''
 
     return content ? content.trim() : null
