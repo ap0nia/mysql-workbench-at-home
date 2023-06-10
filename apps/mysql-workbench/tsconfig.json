@@ -3,6 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "noEmit": true,
+    "allowJs": true,
     "skipLibCheck": true,
     "plugins": [
       { "name": "typescript-svelte-plugin" }

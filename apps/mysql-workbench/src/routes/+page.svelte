@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { EditorView } from '@codemirror/view'
-  import { getAndParseContent } from '$lib/explain_sql_visualizer'
   import { state, value } from '$lib/codemirror'
+  import { getAndParseContent } from '$lib/sql/visualizer'
 
   let editorView: EditorView
 
@@ -27,10 +27,13 @@
   }
 </script>
 
-<div class="flex">
+<div class="flex p-1 border-2 border-primary-200">
   <div class="w-1/2">
     <div bind:this={parent} />
   </div>
+
+  <div class="divider-vertical" />
+
   <div class="h-full w-1/2">
     {@html html}
   </div>

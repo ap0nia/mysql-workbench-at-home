@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { AppRail, AppRailAnchor } from '@skeletonlabs/skeleton'
   import { page } from '$app/stores'
+  import { AppRail, AppRailAnchor } from '@skeletonlabs/skeleton'
 
   const contents = [
     { title: 'Visual Explain Plan', href: '/' },
@@ -8,7 +8,7 @@
   ]
 </script>
 
-<AppRail width="w-24">
+<AppRail width="w-28">
   {#each contents as { href, title }}
     <AppRailAnchor selected={$page.url.pathname === href} {title} name={title} {href}>
       <span>{title}</span>
