@@ -1,7 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { browser } from '$app/environment'
   import { EditorView } from '@codemirror/view'
-  import { state, value } from '$lib/codemirror'
+  import { modeCurrent } from '@skeletonlabs/skeleton'
+  import { createState, extensions, value } from '$lib/codemirror'
+  import { vscodeDark } from '$lib/themes/vscode'
+  import { tokyoNightDay } from '$lib/themes/tokyo-night'
   import { getAndParseContent } from '$lib/sql/visualizer'
 
   let editorView: EditorView
@@ -10,9 +14,23 @@
 
   let html = ''
 
-  onMount(() => {
-    editorView = new EditorView({ state, parent })
+  $: {
+    if (parent && browser) {
+      if ($modeCurrent) {
+        editorView?.destroy()
+        const state = createState([...extensions, tokyoNightDay])
+        editorView = new EditorView({ state, parent })
+      } else {
+        editorView?.destroy()
+        const state = createState([...extensions, vscodeDark])
+        editorView = new EditorView({ state, parent })
+      }
+    }
+  }
 
+  onMount(() => {
+    const state = createState()
+    editorView = new EditorView({ state, parent })
     return {
       destroy() {
         editorView.destroy()

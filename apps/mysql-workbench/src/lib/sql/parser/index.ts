@@ -9,7 +9,11 @@ export default class ExplainedDataParser {
 
   idPrefix: string
 
-  constructor(public data: NodeData['additionalData'], idPrefix: string, nodeData: NodeData) {
+  constructor(
+    public data: NodeData['additionalData'],
+    idPrefix: string | null = null,
+    nodeData: NodeData = Object.create(null)
+  ) {
     this.binaryTree = new BinaryTree(nodeData)
     this.currentDataLevel = null
     this.idPrefix = idPrefix ? `${idPrefix}#` : ''
@@ -312,7 +316,7 @@ export default class ExplainedDataParser {
     node = nodesMap[id]
 
     let content =
-      'data' in node
+      node && 'data' in node
         ? node.data.type === 'nested_loop'
           ? PopupContentUtils.getNestedLoopContent(node.data)
           : node.data.type === 'ordering'

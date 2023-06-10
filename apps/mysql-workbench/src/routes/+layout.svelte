@@ -2,9 +2,12 @@
   import '@skeletonlabs/skeleton/themes/theme-skeleton.css'
   import '@skeletonlabs/skeleton/styles/skeleton.css'
 
-  import { AppShell, autoModeWatcher } from '@skeletonlabs/skeleton'
+  import { AppShell, autoModeWatcher, storePopup } from '@skeletonlabs/skeleton'
+  import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom'
   import Header from '$lib/components/Header.svelte'
   import SideBar from '$lib/components/SideBar.svelte'
+
+  storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 </script>
 
 <svelte:head>
