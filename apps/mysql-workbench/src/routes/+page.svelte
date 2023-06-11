@@ -52,7 +52,7 @@
 
   <div class="divider-vertical" />
 
-  <div class="h-full w-1/2">
+  <div class="h-full w-1/2 p-4">
     {@html html}
   </div>
 </div>

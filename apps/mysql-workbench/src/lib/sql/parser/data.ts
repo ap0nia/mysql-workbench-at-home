@@ -34,6 +34,7 @@ export interface MySQLExplainOutput {
     cost_info: {
       query_cost: string
     }
+    grouping_operation: Omit<MySQLExplainOutput['query_block'], 'grouping_operation'>
     table: {
       table_name: string
       access_type: string

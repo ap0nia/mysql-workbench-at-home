@@ -28,19 +28,27 @@ export default class MermaidUtils {
           additionalData
         )}<br>${MermaidUtils._getPrefixCostContent(
           additionalData,
-          'read_cost'
+          'prefix_cost' // 'read_cost'
         )}<br>${MermaidUtils._getIndexContent(additionalData)}"]`
         break
       case 'nested_loop':
         content = `${id}{"<b>${displayName}</b>"}`
         break
       case 'query_block':
-        content = `${id}[<b>${displayName}</b>${
-          additionalData.cost_info
-            ? `<br>${MermaidUtils._getPrefixCostContent(additionalData, 'query_cost')}<br>`
-            : ''
-        }]`
+        content = `${id}[<b>${displayName}</b>${additionalData.cost_info
+          ? `<br>${MermaidUtils._getPrefixCostContent(additionalData, 'query_cost')}<br>`
+          : ''
+          }]`
         break
+
+      case 'grouping_operation': {
+        if (additionalData.using_temporary_table) {
+          content = `${id}[<b>GROUP - temp table</b>]`;
+        } else {
+          content = `${id}[<b>GROUP</b>]`;
+        }
+        break;
+      }
 
       // case 'attached_subqueries':
       //   content = `${id}[<b>${displayName}</b>]`;
@@ -65,6 +73,14 @@ export default class MermaidUtils {
     let style
 
     switch (type) {
+      case 'grouping_operation': {
+        if (additionalData.using_temporary_table) {
+          style = `style ${id} fill:#fff, stroke:orange, stroke-width:4px;`
+        } else {
+          style = `style ${id} fill:#fff, stroke:yellow, stroke-width:4px;`
+        }
+        break
+      }
       case 'nested_loop':
         style = `style ${id} fill:#fff, stroke:#b3b3b3, stroke-width:2px`
         break

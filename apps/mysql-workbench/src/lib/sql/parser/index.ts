@@ -24,6 +24,8 @@ export default class ExplainedDataParser {
 
     let latestNode = this._parseUnion(root) || root
 
+    latestNode = this._parseGroupingNode(latestNode) || latestNode
+
     latestNode = this._parseDuplicatesRemoval(latestNode) || latestNode
 
     latestNode = this._parseOrderingNode(latestNode) || latestNode
@@ -37,8 +39,6 @@ export default class ExplainedDataParser {
     if (!(this.data && 'query_block' in this.data && this.data.query_block)) return null
 
     const { query_block: queryBlockData } = this.data
-
-    console.log(queryBlockData)
 
     const queryBlockIdentifier = MermaidUtils.getQueryBlockIdentifier(
       this.idPrefix,
@@ -63,6 +63,28 @@ export default class ExplainedDataParser {
     this.currentDataLevel = queryBlockData
 
     return rootNode
+  }
+
+  _parseGroupingNode(parentNode: Node | NodeData | null) {
+    if (!(this.currentDataLevel && 'grouping_operation' in this.currentDataLevel && this.currentDataLevel.grouping_operation)) return null
+
+    const { grouping_operation: groupingBlockData } = this.currentDataLevel
+
+    if (parentNode && 'data' in parentNode) {
+      const groupingBlockIdentifier = MermaidUtils.getQueryBlockIdentifier(this.idPrefix)
+
+      const { id, name } = groupingBlockIdentifier
+
+      const nodeData = new NodeData(id, name, 'grouping_operation', groupingBlockData)
+
+      const node = this.binaryTree.insert(nodeData, parentNode, 'left')
+
+      this.currentDataLevel = groupingBlockData
+
+      return node
+    }
+
+    return null
   }
 
   _parseOrderingNode(parentNode: Node | NodeData | null) {
@@ -190,6 +212,7 @@ export default class ExplainedDataParser {
   }
 
   _parseTableNode(parentNode: Node | NodeData | null) {
+    console.log('parent', parentNode)
     if (!(this.currentDataLevel && 'table' in this.currentDataLevel)) return null
 
     const { table } = this.currentDataLevel
@@ -333,11 +356,14 @@ export default class ExplainedDataParser {
 
   buildMermaidContent(binaryTree: BinaryTree | null = null) {
     binaryTree = binaryTree || this.binaryTree
+    console.log(binaryTree)
 
     let content = ''
     let style = ''
     const nodes = binaryTree.getNodes()
     nodes.reverse()
+
+    console.log({ nodes })
 
     for (let i = 0; i < nodes.length; i += 1) {
       const currentNode = nodes[i]

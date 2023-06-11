@@ -1,11 +1,13 @@
 import mermaid from 'mermaid'
 import { popup, type PopupSettings } from '@skeletonlabs/skeleton'
 import ExplainedDataParser from './parser'
+import { autoPlacement } from '@floating-ui/dom'
 
 const popupOptions: PopupSettings = {
   event: 'click',
   target: 'popupClick',
-  placement: 'top',
+  placement: 'right',
+  middleware: [autoPlacement()]
 }
 
 async function renderFlowchart(parser: ExplainedDataParser) {
